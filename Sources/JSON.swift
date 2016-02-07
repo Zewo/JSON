@@ -36,6 +36,10 @@ public enum JSON {
         return .BooleanValue(value)
     }
 
+    public static func from(value: Int) -> JSON {
+        return .NumberValue(Double(value))
+    }
+    
     public static func from(value: Double) -> JSON {
         return .NumberValue(value)
     }
@@ -47,56 +51,56 @@ public enum JSON {
     public static func from(value: [JSON]) -> JSON {
         return .ArrayValue(value)
     }
+    
+    private static func fromArr<T>(value:[T]) -> JSON {
+        return JSON.from(value.map { JSON.from($0) } )
+    }
+    
+    public static func from(value: [Int]) -> JSON {
+        return fromArr(value)
+    }
+    
+    public static func from(value: [String]) -> JSON {
+        return fromArr(value)
+    }
+    
+    public static func from(value: [Double]) -> JSON {
+        return fromArr(value)
+    }
+    
+    public static func from(value: [Any]) -> JSON {
+        return fromArr(value)
+    }
+    
+    public static func from(value: Any) -> JSON {
+        if let value = value as? Int {
+            return JSON.from(value)
+        } else if let value = value as? Double {
+            return JSON.from(value)
+        } else if let value = value as? String {
+            return JSON.from(value)
+        } else if let value = value as? [Int] {
+            return JSON.from(value)
+        } else if let value = value as? [Double] {
+            return JSON.from(value)
+        } else if let value = value as? [Any] {
+            return JSON.from(value)
+        } else if let value = value as? [String] {
+            return JSON.from(value)
+        } else if let value = value as? [String:Any] {
+            var dict : [String: JSON] = [:]
+            for (k,v) in value {
+                dict[k] = JSON.from(v)
+            }
+            return JSON.from(dict)
+        }
+        /* We have to give up, don't have a rule for this type. Should probably throw an error */
+		//print("Giving up: \(value), \(value.dynamicType)")
+        return .StringValue("\(value)")
+    }
 
-    public static func from(value: [String: JSON]) -> JSON {
+    public static func from(value: [String : JSON]) -> JSON {
         return .ObjectValue(value)
-    }
-
-    // TODO: decide what to do if Any is not a JSON value
-    public static func from(values: [Any]) -> JSON {
-        var jsonArray: [JSON] = []
-        for value in values {
-            if let value = value as? Bool {
-                jsonArray.append(JSON.from(value))
-            }
-            if let value = value as? Double {
-                jsonArray.append(JSON.from(value))
-            }
-            if let value = value as? String {
-                jsonArray.append(JSON.from(value))
-            }
-            if let value = value as? [Any] {
-                jsonArray.append(JSON.from(value))
-            }
-            if let value = value as? [String: Any] {
-                jsonArray.append(JSON.from(value))
-            }
-        }
-        return JSON.from(jsonArray)
-    }
-
-    // TODO: decide what to do if Any is not a JSON value
-    public static func from(value: [String: Any]) -> JSON {
-        var jsonDictionary: [String: JSON] = [:]
-        for (key, value) in value {
-            if let value = value as? Bool {
-                jsonDictionary[key] = JSON.from(value)
-            }
-            if let value = value as? Double {
-                jsonDictionary[key] = JSON.from(value)
-            }
-            if let value = value as? String {
-                jsonDictionary[key] = JSON.from(value)
-            }
-            if let value = value as? [Any] {
-                jsonDictionary[key] = JSON.from(value)
-            }
-            if let value = value as? [String: Any] {
-                jsonDictionary[key] = JSON.from(value)
-            }
-        }
-
-        return JSON.from(jsonDictionary)
     }
 
     public var isBoolean: Bool {
