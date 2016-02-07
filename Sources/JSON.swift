@@ -22,7 +22,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// This file has been modified from its original project Swift-JSONSerializer
+// This file has been modified from its original project Swift-JsonSerializer
 
 public enum JSON {
     case NullValue
