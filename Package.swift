@@ -6,3 +6,6 @@ let package = Package(
         .Package(url: "https://github.com/Zewo/InterchangeData.git", majorVersion: 0, minor: 4)
     ]
 )
+
+let lib = Product(name: "JSON", type: .Library(.Dynamic), modules: "JSON")
+products.append(lib)
