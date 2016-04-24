@@ -35,31 +35,19 @@ public enum JSON {
     case stringValue(String)
     case arrayValue([JSON])
     case objectValue([String: JSON])
-
-    public static func from(_ value: Bool) -> JSON {
-        return .booleanValue(value)
+    
+    public init(_ value: JSONConvertible) {
+        self = value.makeJSON()
     }
-
-    public static func from(_ value: Double) -> JSON {
-        return .numberValue(value)
+    
+    public init(_ value: [JSON]) {
+        self = .arrayValue(value)
     }
-
-    public static func from(_ value: Int) -> JSON {
-        return .numberValue(Double(value))
+    
+    public init(_ value: [String: JSON]) {
+        self = .objectValue(value)
     }
-
-    public static func from(_ value: String) -> JSON {
-        return .stringValue(value)
-    }
-
-    public static func from(_ value: [JSON]) -> JSON {
-        return .arrayValue(value)
-    }
-
-    public static func from(_ value: [String: JSON]) -> JSON {
-        return .objectValue(value)
-    }
-
+    
     public var isBoolean: Bool {
         switch self {
         case .booleanValue: return true
@@ -408,5 +396,45 @@ extension JSON: CustomStringConvertible {
 extension JSON: CustomDebugStringConvertible {
     public var debugDescription: String {
         return PrettyJSONSerializer().serializeToString(json: self)
+    }
+}
+
+public protocol JSONConvertible {
+    func makeJSON() -> JSON
+}
+
+extension String: JSONConvertible {
+    public func makeJSON() -> JSON {
+        return .stringValue(self)
+    }
+}
+
+extension Double: JSONConvertible {
+    public func makeJSON() -> JSON {
+        return .numberValue(self)
+    }
+}
+
+extension Int: JSONConvertible {
+    public func makeJSON() -> JSON {
+        return .numberValue(Double(self))
+    }
+}
+
+extension Float: JSONConvertible {
+    public func makeJSON() -> JSON {
+        return .numberValue(Double(self))
+    }
+}
+
+extension Int32: JSONConvertible {
+    public func makeJSON() -> JSON {
+        return .numberValue(Double(self))
+    }
+}
+
+extension Bool: JSONConvertible {
+    public func makeJSON() -> JSON {
+        return .booleanValue(self)
     }
 }
