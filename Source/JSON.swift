@@ -40,12 +40,20 @@ public enum JSON {
         self = value.makeJSON()
     }
     
-    public init(_ value: [JSON]) {
+    public init(_ value: [JSONRepresentable]) {
+        let value = value.map { $0.makeJSON() }
+        
         self = .arrayValue(value)
     }
     
-    public init(_ value: [String: JSON]) {
-        self = .objectValue(value)
+    public init(_ value: [String: JSONRepresentable]) {
+        var data = [String: JSON]()
+        
+        for (key, newValue) in value.map({ ($0.key, $0.value.makeJSON()) }) {
+            data[key] = newValue
+        }
+        
+        self = .objectValue(data)
     }
     
     public var isBoolean: Bool {
@@ -370,17 +378,17 @@ extension JSON: StringInterpolationConvertible {
 }
 
 extension JSON: ArrayLiteralConvertible {
-    public init(arrayLiteral elements: JSON...) {
-        self = .arrayValue(elements)
+    public init(arrayLiteral elements: JSONRepresentable...) {
+        self = .arrayValue(elements.map { $0.makeJSON() })
     }
 }
 
 extension JSON: DictionaryLiteralConvertible {
-    public init(dictionaryLiteral elements: (String, JSON)...) {
+    public init(dictionaryLiteral elements: (String, JSONRepresentable)...) {
         var dictionary = [String: JSON](minimumCapacity: elements.count)
 
         for pair in elements {
-            dictionary[pair.0] = pair.1
+            dictionary[pair.0] = pair.1.makeJSON()
         }
 
         self = .objectValue(dictionary)
