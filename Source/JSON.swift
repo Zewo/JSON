@@ -36,7 +36,7 @@ public enum JSON {
     case arrayValue([JSON])
     case objectValue([String: JSON])
     
-    public init(_ value: JSONConvertible) {
+    public init(_ value: JSONRepresentable) {
         self = value.makeJSON()
     }
     
@@ -399,42 +399,48 @@ extension JSON: CustomDebugStringConvertible {
     }
 }
 
-public protocol JSONConvertible {
+public protocol JSONRepresentable {
     func makeJSON() -> JSON
 }
 
-extension String: JSONConvertible {
+extension String: JSONRepresentable {
     public func makeJSON() -> JSON {
         return .stringValue(self)
     }
 }
 
-extension Double: JSONConvertible {
+extension Double: JSONRepresentable {
     public func makeJSON() -> JSON {
         return .numberValue(self)
     }
 }
 
-extension Int: JSONConvertible {
+extension Int: JSONRepresentable {
     public func makeJSON() -> JSON {
         return .numberValue(Double(self))
     }
 }
 
-extension Float: JSONConvertible {
+extension Float: JSONRepresentable {
     public func makeJSON() -> JSON {
         return .numberValue(Double(self))
     }
 }
 
-extension Int32: JSONConvertible {
+extension Int32: JSONRepresentable {
     public func makeJSON() -> JSON {
         return .numberValue(Double(self))
     }
 }
 
-extension Bool: JSONConvertible {
+extension Bool: JSONRepresentable {
     public func makeJSON() -> JSON {
         return .booleanValue(self)
+    }
+}
+
+extension JSON: JSONRepresentable {
+    public func makeJSON() -> JSON {
+        return self
     }
 }
